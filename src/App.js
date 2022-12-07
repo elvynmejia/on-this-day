@@ -4,11 +4,13 @@ import {
   QueryClientProvider
 } from '@tanstack/react-query';
 
-import Container from '@mui/material/Container';
+import { Provider } from 'react-redux';
 
+import Container from '@mui/material/Container';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Birthdays from './components/birthdays';
+import store from './store';
 
 const queryClient = new QueryClient();
 
@@ -20,13 +22,15 @@ const App = () => {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <Container>
-          <Birthdays />
-        </Container>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <Container>
+            <Birthdays />
+          </Container>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

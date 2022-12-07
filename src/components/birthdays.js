@@ -1,13 +1,18 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 
-import CircularProgress from "@mui/material/CircularProgress";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import CircularProgress from '@mui/material/CircularProgress';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+
+import ErrorModal from './error';
+import { open as openModal } from '../reducers';
+import fetchBirthdays from '../apis';
 
 const logger = console;
 
@@ -18,51 +23,38 @@ const logger = console;
 // - "Loading" message/UI component must be shown while data is fetched.
 // - Error modal must be shown when data fetch fails.
 
-const fetchBirthdays = async (page) => {
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const day = today.getDate();
-
-  // const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/all/${month}/${day}`;
-
-  const url = [
-    process.env.REACT_APP_ON_THIS_DAY_API_URL,
-    "births",
-    month,
-    day,
-  ].join("/");
-  console.log({ url });
-  try {
-    const response = await fetch(url);
-    return response.json();
-  } catch (e) {
-    logger.error(`Error fetching data from: url ${url}, error: ${e}`);
-    throw e;
-  }
-};
-
 const Birthdays = () => {
+  const dispatch = useDispatch();
+
   const [shouldGetBirthdays, getBirthdays] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["GET_BIRTHDAYS", shouldGetBirthdays],
-    queryFn: fetchBirthdays,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['GET_BIRTHDAYS', shouldGetBirthdays],
+    queryFn: () => fetchBirthdays(logger),
     enabled: shouldGetBirthdays, // disabled as long as shouldGetBirthdays is false
   });
+
+  if (isError) {
+     dispatch(openModal())
+  }
 
   const discoverTodaysBirthdays = (e) => {
     e.preventDefault();
     getBirthdays(true);
   };
 
-  const births = data?.births.sort((a, b) => a.year - b.year) || [];
+  const births = data?.births?.sort((a, b) => a.year - b.year) || [];
+
   return (
     <>
+      <ErrorModal
+        message="Error retreiving today's birthdays. Try again"
+      />
       <Box
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <Button onClick={discoverTodaysBirthdays} variant="outlined">
