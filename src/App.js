@@ -1,11 +1,14 @@
 import './App.css';
 import {
   QueryClient,
-  QueryClientProvider,
+  QueryClientProvider
 } from '@tanstack/react-query';
 
 import Container from '@mui/material/Container';
+
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import Birthdays from './components/birthdays';
 
 const queryClient = new QueryClient();
 
@@ -20,7 +23,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <Container>
-          <p>On This Day</p>
+          <Birthdays />
         </Container>
       </ThemeProvider>
     </QueryClientProvider>
