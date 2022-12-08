@@ -10,3 +10,5 @@
 - add unit tests for individual components
 
 Happy coding!
+![alt ui image](https://github.com/elvynmejia/on-this-day/blob/main/public/on-this-day-ui.png?raw=true)
+
