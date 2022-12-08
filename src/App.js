@@ -25,7 +25,7 @@ const App = ({ queryClient: queryClientProp } = {}) => {
     <Provider store={store}>
       <QueryClientProvider client={queryClientProp || queryClient}>
         <ThemeProvider theme={theme}>
-          <Container>
+          <Container sx={{ m: 2 }}>
             <Birthdays />
           </Container>
         </ThemeProvider>
