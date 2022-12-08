@@ -14,7 +14,7 @@ import store from './store';
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const App = ({ queryClient: queryClientProp } = {}) => {
   const theme = createTheme({
     palette: {
       mode: 'light',
@@ -23,7 +23,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClientProp || queryClient}>
         <ThemeProvider theme={theme}>
           <Container>
             <Birthdays />

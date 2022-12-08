@@ -35,7 +35,7 @@ const Birthdays = () => {
   });
 
   if (isError) {
-     dispatch(openModal())
+     dispatch(openModal());
   }
 
   const discoverTodaysBirthdays = (e) => {
@@ -61,6 +61,7 @@ const Birthdays = () => {
           Discover today's birthdays
         </Button>
       </Box>
+      {isError && <p>HORRIBLE</p>}
       <List dense>
         {shouldGetBirthdays && isLoading && <CircularProgress />}
         {births.map(({ text, year, pages }) => {
