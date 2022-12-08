@@ -9,7 +9,7 @@ import {
 import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
 
-import App from './App';
+import App from '../App';
 import { apiUrl as url, server, testQueryClient } from './testUtils';
 
 beforeAll(() => server.listen());
