@@ -9,8 +9,8 @@ import {
 describe('modal slice', () => {
   test('initial state', () => {
     expect(
-      modalSlice.getInitialState()
-    ).toBe(initialState);
+      initialState
+    ).toStrictEqual({ "isOpen": false })
   });
 
   describe('mutations', () => {
