@@ -1,4 +1,4 @@
-const fetchBirthdays = async (logger) => {
+const fetchBirthdays = async () => {
   const today = new Date();
   const month = today.getMonth() + 1;
   const day = today.getDate();
@@ -11,9 +11,8 @@ const fetchBirthdays = async (logger) => {
   ].join('/');
 
   const response = await fetch(url);
-
   if (!response.ok) {
-    logger.error(`Error fetching data from: url ${url}, error: ${response.error}`);
+    // TODO: construct the correct error class
     throw new Error('Error');
   }
 

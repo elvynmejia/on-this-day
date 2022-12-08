@@ -14,8 +14,6 @@ import ErrorModal from './error';
 import { open as openModal } from '../reducers';
 import fetchBirthdays from '../apis';
 
-const logger = console;
-
 // ### Requirements
 //
 // - Initially there must be a button. Data is fetched and displayed after the button is clicked.
@@ -28,15 +26,16 @@ const Birthdays = () => {
 
   const [shouldGetBirthdays, getBirthdays] = useState(false);
 
-  const { data, isLoading, isError } = useQuery({
+  // NOTE: could use https://redux-toolkit.js.org/tutorials/rtk-query/ instead
+  const { data, isLoading } = useQuery({
     queryKey: ['GET_BIRTHDAYS', shouldGetBirthdays],
-    queryFn: () => fetchBirthdays(logger),
+    queryFn: fetchBirthdays,
+    onError: () => {
+      dispatch(openModal())
+      getBirthdays(false)
+    },
     enabled: shouldGetBirthdays, // disabled as long as shouldGetBirthdays is false
   });
-
-  if (isError) {
-     dispatch(openModal());
-  }
 
   const discoverTodaysBirthdays = (e) => {
     e.preventDefault();
@@ -61,7 +60,6 @@ const Birthdays = () => {
           Discover today's birthdays
         </Button>
       </Box>
-      {isError && <p>HORRIBLE</p>}
       <List dense>
         {shouldGetBirthdays && isLoading && <CircularProgress />}
         {births.map(({ text, year, pages }) => {
