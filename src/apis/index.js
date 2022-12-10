@@ -1,22 +1,20 @@
-const fetchBirthdays = async () => {
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const day = today.getDate();
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-  const url = [
-    process.env.REACT_APP_ON_THIS_DAY_API_URL,
-    'births',
-    month,
-    day
-  ].join('/');
+const today = new Date();
+const month = today.getMonth() + 1;
+const day = today.getDate();
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    // TODO: construct the correct error class
-    throw new Error('Error');
-  }
+export const onThisDayApi = createApi({
+  reducerPath: 'onThisDayApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.REACT_APP_ON_THIS_DAY_API_URL
+  }),
+  endpoints: (builder) => ({
+    getBirthdays: builder.query({
+      query: () => ['births', month, day].join('/'),
+    }),
+  }),
+})
 
-  return response.json();
-};
 
-export default fetchBirthdays;
+export default onThisDayApi;
