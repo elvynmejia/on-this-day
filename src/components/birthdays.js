@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
