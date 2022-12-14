@@ -10,13 +10,16 @@ import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
 
 import App from '../App';
-import { apiUrl as url, server, testQueryClient } from './testUtils';
+import store from '../store';
+import { onThisDayApi } from '../apis';
+import { apiUrl as url, server } from './testUtils';
 
 beforeAll(() => server.listen());
 
 afterEach(async () => {
-  await testQueryClient.invalidateQueries({ stale: true });
   server.resetHandlers();
+  // This is the solution to clear RTK Query cache after each test
+  store.dispatch(onThisDayApi.util.resetApiState());
 });
 
 afterAll(() => server.close());
@@ -62,7 +65,7 @@ describe('App', () => {
   });
 
   test('shows error modal when data fetch fails', async () => {
-    render(<App queryClient={testQueryClient} />);
+    render(<App />);
 
     server.use(
       rest.get(url, (req, res, ctx) => {

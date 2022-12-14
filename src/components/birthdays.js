@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
@@ -12,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import ErrorModal from './error';
 import { open as openModal } from '../reducers';
-import fetchBirthdays from '../apis';
+import { onThisDayApi } from '../apis';
 
 // ### Requirements
 //
@@ -22,27 +20,30 @@ import fetchBirthdays from '../apis';
 // - Error modal must be shown when data fetch fails.
 
 const Birthdays = () => {
-  const dispatch = useDispatch();
-
-  const [shouldGetBirthdays, getBirthdays] = useState(false);
-
-  // NOTE: could use https://redux-toolkit.js.org/tutorials/rtk-query/ instead
-  const { data, isLoading } = useQuery({
-    queryKey: ['GET_BIRTHDAYS', shouldGetBirthdays],
-    queryFn: fetchBirthdays,
-    onError: () => {
-      dispatch(openModal())
-      getBirthdays(false)
-    },
-    enabled: shouldGetBirthdays, // disabled as long as shouldGetBirthdays is false
-  });
-
-  const discoverTodaysBirthdays = (e) => {
-    e.preventDefault();
-    getBirthdays(true);
+  const defaultData = {
+    births: []
   };
 
-  const births = data?.births?.sort((a, b) => a.year - b.year) || [];
+  const dispatch = useDispatch();
+  const lazyQuery = onThisDayApi.endpoints.getBirthdays.useLazyQuery();
+
+  const [trigger, response] = lazyQuery;
+
+  const { isLoading, data = defaultData } = response;
+
+  const discoverTodaysBirthdays = async (e) => {
+    e.preventDefault();
+
+    const { isError } = await trigger();
+
+    if (isError) {
+      dispatch(openModal());
+    }
+  };
+
+  const births = [
+    ...data.births
+  ].sort((a, b) => a.year - b.year);
 
   return (
     <>
@@ -61,7 +62,7 @@ const Birthdays = () => {
         </Button>
       </Box>
       <List dense>
-        {shouldGetBirthdays && isLoading && <CircularProgress />}
+        {isLoading && <CircularProgress />}
         {births.map(({ text, year, pages }) => {
           const pageUrl = pages[0].content_urls.desktop.page;
           return (
